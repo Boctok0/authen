@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Đăng nhập</h2>
+        
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" required class="form-input" placeholder="your@email.com">
+            </div>
+            
+            <div>
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" id="password" name="password" required class="form-input" placeholder="••••••••">
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="h-4 w-4 text-blue-500">
+                    <label for="remember" class="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</label>
+                </div>
+                <a href="#" class="text-sm text-blue-500 hover:text-blue-600">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn-primary w-full">Đăng nhập</button>
+        </form>
+
+        <!-- Social Login -->
+        <div class="mt-6">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Hoặc đăng nhập với</span>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button id="googleLogin" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <img class="h-5 w-5 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
+                    Google
+                </button>
+            </div>
+        </div>
+
+        <p class="mt-8 text-center text-sm text-gray-600">
+            Chưa có tài khoản? 
+            <a href="register.html" class="font-medium text-blue-500 hover:text-blue-600">Đăng ký ngay</a>
+        </p>
+    </div>
+
+    <script type="module">
+        import { LoginWithGoogle, handleLogin } from './configFirebase.js';
+
+        // Google Login
+        document.getElementById('googleLogin').addEventListener('click', async () => {
+            try {
+                const user = await LoginWithGoogle();
+                if (user) {
+                    window.location.href = 'list-users.html';
+                }
+            } catch (error) {
+                console.error('Login failed:', error);
+                alert('Đăng nhập thất bại. Vui lòng thử lại.');
+            }
+        });
+
+        // Form Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const user = await handleLogin(email, password);
+                if (user) {
+                    window.location.href = 'list-users.html';
+                } else {
+                    alert('Email hoặc mật khẩu không chính xác.');
+                }
+            } catch (error) {
+                console.error('Login failed:', error);
+                alert('Đăng nhập thất bại. Vui lòng thử lại.');
+            }
+        });
+    </script>
+</body>
+</html> 

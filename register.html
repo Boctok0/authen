@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Đăng ký tài khoản</h2>
+        
+        <!-- Registration Form -->
+        <form id="registerForm" class="space-y-6">
+            <div>
+                <label for="fullName" class="form-label">Họ và tên</label>
+                <input type="text" id="fullName" name="fullName" required class="form-input" placeholder="Nguyễn Văn A">
+                <p id="fullNameError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+
+            <div>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" required class="form-input" placeholder="your@email.com">
+                <p id="emailError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+            
+            <div>
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" id="password" name="password" required class="form-input" placeholder="••••••••">
+                <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+
+            <div>
+                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required class="form-input" placeholder="••••••••">
+                <p id="confirmPasswordError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+
+            <div>
+                <label for="age" class="form-label">Tuổi</label>
+                <input type="number" id="age" name="age" required class="form-input" min="1" max="120">
+                <p id="ageError" class="text-red-500 text-sm mt-1 hidden"></p>
+            </div>
+
+            <button type="submit" class="btn-primary w-full">Đăng ký</button>
+        </form>
+
+        <p class="mt-8 text-center text-sm text-gray-600">
+            Đã có tài khoản? 
+            <a href="login.html" class="font-medium text-blue-500 hover:text-blue-600">Đăng nhập</a>
+        </p>
+    </div>
+
+    <script type="module">
+        import { createUser } from './configFirebase.js';
+
+        const form = document.getElementById('registerForm');
+        const errorMessages = {
+            fullName: document.getElementById('fullNameError'),
+            email: document.getElementById('emailError'),
+            password: document.getElementById('passwordError'),
+            confirmPassword: document.getElementById('confirmPasswordError'),
+            age: document.getElementById('ageError')
+        };
+
+        function showError(field, message) {
+            errorMessages[field].textContent = message;
+            errorMessages[field].classList.remove('hidden');
+        }
+
+        function hideError(field) {
+            errorMessages[field].classList.add('hidden');
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const age = document.getElementById('age').value;
+
+            // Reset all errors
+            Object.values(errorMessages).forEach(error => error.classList.add('hidden'));
+
+            // Validate Full Name
+            if (fullName.length < 2) {
+                showError('fullName', 'Họ tên phải có ít nhất 2 ký tự');
+                isValid = false;
+            }
+
+            // Validate Email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('email', 'Email không hợp lệ');
+                isValid = false;
+            }
+
+            // Validate Password
+            if (password.length < 6) {
+                showError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
+                isValid = false;
+            }
+
+            // Validate Confirm Password
+            if (password !== confirmPassword) {
+                showError('confirmPassword', 'Mật khẩu xác nhận không khớp');
+                isValid = false;
+            }
+
+            // Validate Age
+            if (age < 1 || age > 120) {
+                showError('age', 'Tuổi phải từ 1 đến 120');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                age: parseInt(document.getElementById('age').value),
+                createdAt: new Date(),
+                role: 'user'
+            };
+
+            try {
+                await createUser(formData);
+                alert('Đăng ký thành công!');
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Registration failed:', error);
+                alert('Đăng ký thất bại. Vui lòng thử lại.');
+            }
+        });
+
+        // Hide errors when user starts typing
+        Object.keys(errorMessages).forEach(field => {
+            document.getElementById(field).addEventListener('input', () => hideError(field));
+        });
+    </script>
+</body>
+</html> 

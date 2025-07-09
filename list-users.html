@@ -1,189 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-        crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <style>
-        #list-users {
-            max-width: 900px;
-            margin: 40px auto;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        #list-users table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        #list-users thead {
-            background-color: #007BFF;
-            color: #fff;
-            text-align: left;
-        }
-
-        #list-users th,
-        #list-users td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        #list-users tbody tr:hover {
-            background-color: #f1f8ff;
-            cursor: pointer;
-        }
-
-        #list-users th:first-child,
-        #list-users td:first-child {
-            width: 60px;
-            text-align: center;
-        }
-
-        #list-users td {
-            color: #333;
-        }
-
-        #list-users tbody tr:last-child td {
-            border-bottom: none;
-        }
-    </style>
+    <title>Quản lý người dùng</title>
+    <link href="styles.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
-    <div id="list-users">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1>Manage Userscbzaza</h1>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                + Add User ...
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add User</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                                <div class="mb-3">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" name="fullName">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="age" class="form-label">Age</label>
-                                    <input type="number" class="form-control" id="age" name="age">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="role" class="form-label">Role</label>
-                                    <select class="form-select" id="role" name="role">
-                                        <option value="admin">Admin</option>
-                                        <option value="user">User</option>
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="adduser">Add User</button>
-                        </div>
-                    </div>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-800">Quản lý người dùng</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userInfo" class="text-gray-600"></span>
+                    <button id="logoutBtn" class="text-gray-600 hover:text-gray-800">Đăng xuất</button>
                 </div>
             </div>
         </div>
-            <table>
-                <thead>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center space-x-4">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm..." class="form-input px-4 py-2 rounded-lg">
+                <select id="roleFilter" class="form-input px-4 py-2 rounded-lg">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
+            <button id="addUserBtn" class="btn-primary">
+                + Thêm người dùng
+            </button>
+        </div>
+
+        <!-- User Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <th>STT</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Age</th>
-                        <th>Created</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STT</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ tên</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tuổi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
                     </tr>
                 </thead>
-                <tbody id="list-users-body">
-
+                <tbody id="userTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- User rows will be inserted here -->
                 </tbody>
             </table>
-
         </div>
-</body>
-<script type="module">
-    import { getUsers, createUser } from "./configFirebase.js";
-    async function renderUsers() {
-        const users = await getUsers();
-        const listUsersBody = document.getElementById("list-users-body");
-        let html = "";
-        for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            html += `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td>${user.fullName}</td>
-                    <td>${user.email}</td>
-                    <td>${user.age}</td>
-                    <td>${user.createdAt.toDate().toLocaleDateString()}</td>
-                </tr>
-            `;
-        }
-        listUsersBody.innerHTML = html;
-    }
-    renderUsers();
-    
-    const fullName = document.getElementById("fullName");
-    const email = document.getElementById("email");    
-    const age = document.getElementById("age");
-    const password = document.getElementById("password");
-    const role = document.getElementById("role");
-    const addUserButton = document.getElementById("adduser");
-    
-    async function addUserToTable(user) {
-        await createUser({
-            fullName: fullName.value,
-            email: email.value,
-            age: age.value,
-            password: password.value,
-            role: role.value,
-            createdAt: new Date()
-        });
-        renderUsers();
-            fullName.value = "";
-            email.value = "";   
-            age.value = "";
-            password.value = "";
-            role.value = "user"; // Reset to default role
-            const modal = document.querySelector('.modal');
-            const modalInstance = bootstrap.Modal.getInstance(modal);
-            modalInstance.hide(); // Hide the modal after adding user
-    }
-    addUserButton.addEventListener("click", async () => {
-        if (!fullName.value || !email.value || !age.value || !password.value) {
-            alert("Please fill in all fields.");
-            return;
-        }
-        await addUserToTable();
-    });
-</script>
 
+        <!-- Add/Edit User Modal -->
+        <div id="userModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h3 id="modalTitle" class="text-lg font-medium text-gray-900"></h3>
+                        <button class="modal-close text-gray-400 hover:text-gray-500">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="userForm" class="p-6">
+                        <input type="hidden" id="userId">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="modalFullName" class="form-label">Họ và tên</label>
+                                <input type="text" id="modalFullName" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="modalEmail" class="form-label">Email</label>
+                                <input type="email" id="modalEmail" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="modalAge" class="form-label">Tuổi</label>
+                                <input type="number" id="modalAge" class="form-input" required min="1" max="120">
+                            </div>
+                            <div>
+                                <label for="modalRole" class="form-label">Vai trò</label>
+                                <select id="modalRole" class="form-input" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div id="passwordFields">
+                                <div>
+                                    <label for="modalPassword" class="form-label">Mật khẩu</label>
+                                    <input type="password" id="modalPassword" class="form-input">
+                                </div>
+                                <div>
+                                    <label for="modalConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                                    <input type="password" id="modalConfirmPassword" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end space-x-3">
+                            <button type="button" class="modal-close btn-secondary">Hủy</button>
+                            <button type="submit" class="btn-primary">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getUsers, createUser, updateUser, deleteUser, checkAuth, checkRole } from './configFirebase.js';
+
+        // Check authentication and role
+        const currentUser = checkAuth();
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        }
+
+        // Display user info
+        document.getElementById('userInfo').textContent = `${currentUser.fullName} (${currentUser.role})`;
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+
+        // Variables
+        let users = [];
+        const modal = document.getElementById('userModal');
+        const userForm = document.getElementById('userForm');
+        const searchInput = document.getElementById('searchInput');
+        const roleFilter = document.getElementById('roleFilter');
+
+        // Load users
+        async function loadUsers() {
+            try {
+                users = await getUsers();
+                filterAndRenderUsers();
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                alert('Không thể tải danh sách người dùng');
+            }
+        }
+
+        // Filter and render users
+        function filterAndRenderUsers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleFilterValue = roleFilter.value;
+
+            const filteredUsers = users.filter(user => {
+                const matchesSearch = user.fullName.toLowerCase().includes(searchTerm) ||
+                                    user.email.toLowerCase().includes(searchTerm);
+                const matchesRole = !roleFilterValue || user.role === roleFilterValue;
+                return matchesSearch && matchesRole;
+            });
+
+            renderUsers(filteredUsers);
+        }
+
+        // Render users table
+        function renderUsers(usersToRender) {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+
+            usersToRender.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${user.fullName}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${user.email}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.age || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                        }">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.createdAt.toDate().toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                        <button class="text-indigo-600 hover:text-indigo-900" onclick="window.editUser('${user.id}')">
+                            Sửa
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="window.deleteUserHandler('${user.id}')">
+                            Xóa
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Show modal
+        function showModal(title = 'Thêm người dùng mới') {
+            document.getElementById('modalTitle').textContent = title;
+            modal.classList.remove('hidden');
+            if (title === 'Thêm người dùng mới') {
+                document.getElementById('passwordFields').style.display = 'block';
+            } else {
+                document.getElementById('passwordFields').style.display = 'none';
+            }
+        }
+
+        // Hide modal
+        function hideModal() {
+            modal.classList.add('hidden');
+            userForm.reset();
+            document.getElementById('userId').value = '';
+        }
+
+        // Edit user
+        window.editUser = async (userId) => {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                document.getElementById('userId').value = userId;
+                document.getElementById('modalFullName').value = user.fullName;
+                document.getElementById('modalEmail').value = user.email;
+                document.getElementById('modalAge').value = user.age;
+                document.getElementById('modalRole').value = user.role;
+                showModal('Chỉnh sửa người dùng');
+            }
+        };
+
+        // Delete user
+        window.deleteUserHandler = async (userId) => {
+            if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+                try {
+                    await deleteUser(userId);
+                    await loadUsers();
+                    alert('Xóa người dùng thành công');
+                } catch (error) {
+                    console.error('Delete failed:', error);
+                    alert('Không thể xóa người dùng');
+                }
+            }
+        };
+
+        // Form submit handler
+        userForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const userData = {
+                fullName: document.getElementById('modalFullName').value,
+                email: document.getElementById('modalEmail').value,
+                age: parseInt(document.getElementById('modalAge').value),
+                role: document.getElementById('modalRole').value
+            };
+
+            try {
+                if (userId) {
+                    // Update existing user
+                    await updateUser(userId, userData);
+                    alert('Cập nhật người dùng thành công');
+                } else {
+                    // Create new user
+                    const password = document.getElementById('modalPassword').value;
+                    const confirmPassword = document.getElementById('modalConfirmPassword').value;
+
+                    if (password !== confirmPassword) {
+                        alert('Mật khẩu xác nhận không khớp');
+                        return;
+                    }
+
+                    userData.password = password;
+                    userData.createdAt = new Date();
+                    await createUser(userData);
+                    alert('Thêm người dùng mới thành công');
+                }
+
+                hideModal();
+                await loadUsers();
+            } catch (error) {
+                console.error('Operation failed:', error);
+                alert(error.message || 'Thao tác thất bại');
+            }
+        });
+
+        // Event Listeners
+        document.getElementById('addUserBtn').addEventListener('click', () => showModal());
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', hideModal);
+        });
+        searchInput.addEventListener('input', filterAndRenderUsers);
+        roleFilter.addEventListener('change', filterAndRenderUsers);
+
+        // Initial load
+        loadUsers();
+    </script>
+</body>
 </html>

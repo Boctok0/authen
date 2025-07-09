@@ -1,0 +1,17 @@
+{
+  "name": "authen",
+  "version": "1.0.0",
+  "description": "# Mục tiêu dự án: - Làm 1 dự án để người dùng có thể lưu trữ thông tin các tài khoản,... - Hoạt động tôt trên mobile và desktop -....",
+  "main": "configFirebase.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
+  }
+}
